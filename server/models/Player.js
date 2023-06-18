@@ -16,6 +16,7 @@ const PlayerSchema = new Schema({
   birth_date: { type: Date, required: true },
   first_year: { type: Number, required: true },
   last_year: { type: Number, required: true },
+  playerId: { type: Number },
 });
 
 export default mongoose.model('Player', PlayerSchema);

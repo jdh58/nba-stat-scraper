@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
-import Player from './models/Player.js';
+import Player from '../models/Player.js';
+import NBA from 'nba';
 
 // USE INSTRUCTIONS: Update file contents and year stats are saving to
 async function importNBARegulatSeasonData(req, res, next) {
@@ -178,10 +179,21 @@ async function importNBARegulatSeasonData(req, res, next) {
     } else {
       // This player does not exist. Let's create a new player document for them.
       console.log(statsArray[1]);
+
+      const player = NBA.findPlayer(statsArray[1]);
+      let playerId;
+
+      if (player) {
+        playerId = player.playerId;
+      }
+
+      // Find the player's NBA id, which will give us their picture
       const newPlayer = new Player({
         league: 'NBA',
         name: statsArray[1],
-        picture: '.',
+        picture: playerId
+          ? `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerId.toString()}.png`
+          : '',
         stats: {
           '2022-23': {
             teams: [statsArray[2]],
@@ -218,6 +230,7 @@ async function importNBARegulatSeasonData(req, res, next) {
         birth_date: 0,
         first_year: 0,
         last_year: 0,
+        playerId: playerId,
       });
 
       await newPlayer.save();

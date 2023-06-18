@@ -1,5 +1,5 @@
 import express from 'express';
-import importData from './importData.js';
+import scraperRoute from './routes/scraperRoute.js';
 import mongoose from 'mongoose';
 
 // Configure .env variables
@@ -13,11 +13,7 @@ mongoose.connect(mongoDB).catch((err) => {
 
 const app = express();
 
-app.use('/', importData);
-
-app.use('/', (req, res) => {
-  res.send('basdas');
-});
+app.use('/scraper', scraperRoute);
 
 app.listen(3000, () => {
   console.log('server now running on port 3000');
