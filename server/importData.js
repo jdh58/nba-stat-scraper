@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
-import Player from './models/Player';
-import { stat } from 'fs';
+import Player from './models/Player.js';
 
 // USE INSTRUCTIONS: Update file contents and year stats are saving to
 async function importNBARegulatSeasonData(req, res, next) {
@@ -12,59 +11,94 @@ async function importNBARegulatSeasonData(req, res, next) {
   // Use regex to get all variants of newline to split
   const fileLines = fileContents.split(/\r?\n/);
 
-  // console.log(fileLines);
-
   // For each line, split it by commas then put it into the DB based off the stats
 
-  fileLines.forEach(async (line) => {
+  for (let i = 0; i < fileLines.length - 1; i++) {
     // Remove all quotes from the string and split it by commas into an array
-    line = line.replace(/"/g, '');
+    const line = fileLines[i].replace(/"/g, '');
     const statsArray = line.split(',');
 
-    console.log(statsArray);
-
     // First, check if this player already has a document
+    console.log();
     const existingPlayer = await Player.findOne({ name: statsArray[1] });
+
+    console.log('EXISTING PLAYER: ' + existingPlayer);
 
     // If they have a document, update the stats with the current year
     if (existingPlayer) {
       /* Check if they already have stats for this season. */
       if (existingPlayer.stats['2022-23']) {
         /* If they do, that means they have been on multiple teams and we must merge their stats */
-        const currentStats = existingPlayer.stats['2022-23'].stats;
+        const currentStats = existingPlayer.stats['2022-23'];
 
-        const newGP = statsArray[5];
+        const newGP = parseInt(statsArray[5]);
         const totalGP = currentStats.gp + newGP;
 
         const perGameTotal = (oldStat, newStat) =>
           (oldStat * currentStats.gp + newStat * newGP) / totalGP;
 
-        const totalMPG = perGameTotal(currentStats.mpg, statsArray[6]);
-        const totalUSGP = perGameTotal(currentStats.usgP, statsArray[7]);
-        const totalTOP = perGameTotal(currentStats.toP, statsArray[8]);
-        const totalPPG = perGameTotal(currentStats.ppg, statsArray[17]);
-        const totalRPG = perGameTotal(currentStats.rpg, statsArray[18]);
-        const totalAPG = perGameTotal(currentStats.apg, statsArray[19]);
-        const totalSPG = perGameTotal(currentStats.spg, statsArray[20]);
-        const totalBPG = perGameTotal(currentStats.bpg, statsArray[21]);
-        const totalTPG = perGameTotal(currentStats.tpg, statsArray[22]);
-        const totalORTG = perGameTotal(currentStats.ortg, statsArray[27]);
-        const totalDRTG = perGameTotal(currentStats.drtg, statsArray[28]);
+        const totalMPG = perGameTotal(
+          currentStats.mpg,
+          parseFloat(statsArray[6])
+        );
+        const totalPPG = perGameTotal(
+          currentStats.ppg,
+          parseFloat(statsArray[17])
+        );
+        const totalRPG = perGameTotal(
+          currentStats.rpg,
+          parseFloat(statsArray[18])
+        );
+        const totalAPG = perGameTotal(
+          currentStats.apg,
+          parseFloat(statsArray[19])
+        );
+        const totalSPG = perGameTotal(
+          currentStats.spg,
+          parseFloat(statsArray[20])
+        );
+        const totalBPG = perGameTotal(
+          currentStats.bpg,
+          parseFloat(statsArray[21])
+        );
+        const totalTPG = perGameTotal(
+          currentStats.tpg,
+          parseFloat(statsArray[22])
+        );
 
-        const totalFTA = currentStats.fta + statsArray[9];
-        const total2PA = currentStats['2pa'] + statsArray[11];
-        const total3PA = currentStats['3pa'] + statsArray[13];
+        /* These are rough estimations... but the best I can do with current
+        info + they should be incredibly close */
+        const totalUSGP = perGameTotal(
+          currentStats.usgP,
+          parseFloat(statsArray[7])
+        );
+        const totalTOP = perGameTotal(
+          currentStats.toP,
+          parseFloat(statsArray[8])
+        );
+        const totalORTG = perGameTotal(
+          currentStats.ortg,
+          parseFloat(statsArray[27])
+        );
+        const totalDRTG = perGameTotal(
+          currentStats.drtg,
+          parseFloat(statsArray[28])
+        );
+
+        const totalFTA = currentStats.fta + parseFloat(statsArray[9]);
+        const total2PA = currentStats['2pa'] + parseFloat(statsArray[11]);
+        const total3PA = currentStats['3pa'] + parseFloat(statsArray[13]);
         const totalFTP =
           (currentStats.ftP * currentStats.fta +
-            statsArray[10] * statsArray[9]) /
+            parseFloat(statsArray[10]) * parseFloat(statsArray[9])) /
           totalFTA;
         const total2PP =
           (currentStats['2pP'] * currentStats['2pa'] +
-            statsArray[12] * statsArray[11]) /
+            parseFloat(statsArray[12]) * parseFloat(statsArray[11])) /
           total2PA;
         const total3PP =
           (currentStats['3pP'] * currentStats['3pa'] +
-            statsArray[14] * statsArray[13]) /
+            parseFloat(statsArray[14]) * parseFloat(statsArray[13])) /
           total3PA;
 
         // (FGM + .5 * 3PM) / FGA
@@ -73,20 +107,17 @@ async function importNBARegulatSeasonData(req, res, next) {
         const totaleFG = (totalFGM + 0.5 * total3PA * total3PP) / totalFGA;
 
         // TS% = PTS / (2 * TSA)
-
         const totalPTS = totalPPG * totalGP;
-
         const totalTSA = totalFGA + 0.44 * totalFTA;
-
         const totalTSP = totalPTS / (2 * totalTSA);
 
         await Player.updateOne(
           { name: statsArray[1] },
           {
             'stats.2022-23': {
-              teams: [...currentStats.team, statsArray[2]],
+              teams: [...currentStats.teams, statsArray[2]],
               position: statsArray[3],
-              age: statsArray[4],
+              age: parseFloat(statsArray[4]),
               gp: totalGP,
               mpg: totalMPG,
               usgP: totalUSGP,
@@ -111,40 +142,87 @@ async function importNBARegulatSeasonData(req, res, next) {
           }
         );
       } else {
-        // Otherwise, fill out the player's stats for this season
+        /* If they exist but don't have this season's stats yet,
+        fill out the player's stats for this season */
         await Player.updateOne(
           { name: statsArray[1] },
           {
             'stats.2022-23': {
               teams: [statsArray[2]],
-              position: statsArray[3],
-              age: statsArray[4],
-              gp: statsArray[5],
-              mpg: statsArray[6],
-              usgP: statsArray[7],
-              toP: statsArray[8],
-              fta: statsArray[9],
-              ftP: statsArray[10],
-              '2pa': statsArray[11],
-              '2pP': statsArray[12],
-              '3pa': statsArray[13],
-              '3pP': statsArray[14],
-              efgP: statsArray[15],
-              tsP: statsArray[16],
-              ppg: statsArray[17],
-              rpg: statsArray[18],
-              apg: statsArray[19],
-              spg: statsArray[20],
-              bpg: statsArray[21],
-              tpg: statsArray[22],
-              ortg: statsArray[27],
-              drtg: statsArray[28],
+              position: parseFloat(statsArray[3]),
+              age: parseFloat(statsArray[4]),
+              gp: parseInt(statsArray[5]),
+              mpg: parseFloat(statsArray[6]),
+              usgP: parseFloat(statsArray[7]),
+              toP: parseFloat(statsArray[8]),
+              fta: parseInt(statsArray[9]),
+              ftP: parseFloat(statsArray[10]),
+              '2pa': parseInt(statsArray[11]),
+              '2pP': parseFloat(statsArray[12]),
+              '3pa': parseInt(statsArray[13]),
+              '3pP': parseFloat(statsArray[14]),
+              efgP: parseFloat(statsArray[15]),
+              tsP: parseFloat(statsArray[16]),
+              ppg: parseFloat(statsArray[17]),
+              rpg: parseFloat(statsArray[18]),
+              apg: parseFloat(statsArray[19]),
+              spg: parseFloat(statsArray[20]),
+              bpg: parseFloat(statsArray[21]),
+              tpg: parseFloat(statsArray[22]),
+              ortg: parseFloat(statsArray[27]),
+              drtg: parseFloat(statsArray[28]),
             },
           }
         );
       }
+    } else {
+      // This player does not exist. Let's create a new player document for them.
+      console.log(statsArray[1]);
+      const newPlayer = new Player({
+        league: 'NBA',
+        name: statsArray[1],
+        picture: '.',
+        stats: {
+          '2022-23': {
+            teams: [statsArray[2]],
+            position: statsArray[3],
+            age: parseFloat(statsArray[4]),
+            gp: parseInt(statsArray[5]),
+            mpg: parseFloat(statsArray[6]),
+            usgP: parseFloat(statsArray[7]),
+            toP: parseFloat(statsArray[8]),
+            fta: parseInt(statsArray[9]),
+            ftP: parseFloat(statsArray[10]),
+            '2pa': parseInt(statsArray[11]),
+            '2pP': parseFloat(statsArray[12]),
+            '3pa': parseInt(statsArray[13]),
+            '3pP': parseFloat(statsArray[14]),
+            efgP: parseFloat(statsArray[15]),
+            tsP: parseFloat(statsArray[16]),
+            ppg: parseFloat(statsArray[17]),
+            rpg: parseFloat(statsArray[18]),
+            apg: parseFloat(statsArray[19]),
+            spg: parseFloat(statsArray[20]),
+            bpg: parseFloat(statsArray[21]),
+            tpg: parseFloat(statsArray[22]),
+            ortg: parseFloat(statsArray[27]),
+            drtg: parseFloat(statsArray[28]),
+          },
+        },
+        funFacts: {},
+        nicknames: [],
+        championships: 0,
+        college: '.',
+        pick: 0,
+        country_of_birth: '.',
+        birth_date: 0,
+        first_year: 0,
+        last_year: 0,
+      });
+
+      await newPlayer.save();
     }
-  });
+  }
 
   res.send('dasdasdas');
 }

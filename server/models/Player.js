@@ -6,7 +6,7 @@ const PlayerSchema = new Schema({
   league: { type: String, required: true, minLength: 1, maxLength: 5 },
   name: { type: String, required: true, minLength: 1, maxLength: 100 },
   picture: { type: String, required: true, maxLength: 100 },
-  stats: { type: Schema.Types.Subdocument, required: true },
+  stats: { type: Object, required: true },
   funFacts: { type: Array, required: true },
   nicknames: { type: Array, required: true },
   championships: { type: Number, required: true },
