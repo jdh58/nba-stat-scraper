@@ -74,11 +74,11 @@ async function importNBARegulatSeasonData(req, res, next) {
 
         // TS% = PTS / (2 * TSA)
 
-        const totalPTS = totalPPG + totalMPG;
+        const totalPTS = totalPPG * totalGP;
 
         const totalTSA = totalFGA + 0.44 * totalFTA;
 
-        const totalTSP = totalFGA;
+        const totalTSP = totalPTS / (2 * totalTSA);
 
         await Player.updateOne(
           { name: statsArray[1] },
@@ -98,7 +98,7 @@ async function importNBARegulatSeasonData(req, res, next) {
               '3pa': total3PA,
               '3pP': total3PP,
               efgP: totaleFG,
-              tsP: statsArray[16],
+              tsP: totalTSP,
               ppg: totalPPG,
               rpg: totalRPG,
               apg: totalAPG,
