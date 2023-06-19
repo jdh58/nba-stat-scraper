@@ -112,6 +112,12 @@ const getPlayer = async (req, res) => {
     statContainer.each((index, row) => {
       const rowData = $(row);
 
+      // Make sure the stats we are getting are NBA stats.
+      // This check also eliminates seasons a player completely missed.
+      if (rowData.find('[data-stat="lg_id"]').text().trim() !== 'NBA') {
+        return;
+      }
+
       /* Check if the stats for this year are already generated. If they are,
       that means that the player has played for multiple teams in one year.
       Keep the total stats the same, just update the teams. */
@@ -128,7 +134,6 @@ const getPlayer = async (req, res) => {
             rowData.find('[data-stat="team_id"]').text().trim() === 'TOT'
               ? []
               : [rowData.find('[data-stat="team_id"]').text().trim()],
-          league: rowData.find('[data-stat="lg_id"]').text().trim(),
           position: rowData.find('[data-stat="pos"]').text().trim(),
           games: rowData.find('[data-stat="g"]').text().trim(),
           games_started: rowData.find('[data-stat="gs"]').text().trim(),
