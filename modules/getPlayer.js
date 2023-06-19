@@ -45,6 +45,7 @@ const getPlayer = async (playerName) => {
     const accolades = [];
     let championships = 0;
     let mvps = 0;
+    let allStars = 0;
     const accoladeList = $('#bling > li');
 
     accoladeList.each((index, accolade) => {
@@ -67,8 +68,10 @@ const getPlayer = async (playerName) => {
         } else {
           mvps = parseInt(accoladeText.match(/^\d+/)[0]);
         }
+      } else if (/^\d+x All Star$/.test(accoladeText)) {
+        // Here they will all have x's, so just get the leading number
+        allStars = parseInt(accoladeText.match(/^\d+/));
       }
-
       accolades.push(accoladeElement.text());
     });
 
@@ -210,6 +213,7 @@ const getPlayer = async (playerName) => {
       nicknames,
       championships,
       mvps,
+      allStars,
       accolades,
       stats,
       shooting_hand,
