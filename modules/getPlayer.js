@@ -195,6 +195,37 @@ const getPlayer = async (playerName) => {
       }
     });
 
+    // Now get the career stats and load them
+    const careerStatsRow = $('#div_per_game tfoot > tr').first();
+
+    stats.career = {
+      games: careerStatsRow.find('[data-stat="g"]').text().trim(),
+      games_started: careerStatsRow.find('[data-stat="gs"]').text().trim(),
+      mpg: careerStatsRow.find('[data-stat="mp_per_g"]').text().trim(),
+      fg: careerStatsRow.find('[data-stat="fg_per_g"]').text().trim(),
+      fga: careerStatsRow.find('[data-stat="fga_per_g"]').text().trim(),
+      fg_pct: careerStatsRow.find('[data-stat="fg_pct"]').text().trim(),
+      '3p': careerStatsRow.find('[data-stat="fg3_per_g"]').text().trim(),
+      '3pa': careerStatsRow.find('[data-stat="fg3a_per_g"]').text().trim(),
+      '3p_pct': careerStatsRow.find('[data-stat="fg3_pct"]').text().trim(),
+      '2p': careerStatsRow.find('[data-stat="fg2_per_g"]').text().trim(),
+      '2pa': careerStatsRow.find('[data-stat="fg2a_per_g"]').text().trim(),
+      '2p_pct': careerStatsRow.find('[data-stat="fg2_pct"]').text().trim(),
+      efg: careerStatsRow.find('[data-stat="efg_pct"]').text().trim(),
+      ft: careerStatsRow.find('[data-stat="ft_per_g"]').text().trim(),
+      fta: careerStatsRow.find('[data-stat="fta_per_g"]').text().trim(),
+      ft_pct: careerStatsRow.find('[data-stat="ft_pct"]').text().trim(),
+      orb: careerStatsRow.find('[data-stat="orb_per_g"]').text().trim(),
+      drb: careerStatsRow.find('[data-stat="drb_per_g"]').text().trim(),
+      trb: careerStatsRow.find('[data-stat="trb_per_g"]').text().trim(),
+      ast: careerStatsRow.find('[data-stat="ast_per_g"]').text().trim(),
+      stl: careerStatsRow.find('[data-stat="stl_per_g"]').text().trim(),
+      bpg: careerStatsRow.find('[data-stat="blk_per_g"]').text().trim(),
+      tpg: careerStatsRow.find('[data-stat="tov_per_g"]').text().trim(),
+      pf: careerStatsRow.find('[data-stat="pf_per_g"]').text().trim(),
+      ppg: careerStatsRow.find('[data-stat="pts_per_g"]').text().trim(),
+    };
+
     // Finally, get the player's NBA.com id and headshot
     let playerID = $('#div_stats-nba-com > div > a:nth-child(1)').attr('href');
     // Null check for player that are retired or otherwise missing this link
@@ -226,7 +257,7 @@ const getPlayer = async (playerName) => {
       debut,
     };
 
-    return player;
+    return JSON.stringify(player);
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }

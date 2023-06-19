@@ -1,6 +1,6 @@
 const getPlayer = require('./modules/getPlayer');
 
 (async () => {
-  const banana = await getPlayer('bill russel');
-  console.log(banana);
+  const banana = await getPlayer('kevin durant');
+  console.log(JSON.parse(banana));
 })();
