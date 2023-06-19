@@ -25,21 +25,54 @@ async function getTeam(teamName) {
   // First, grab the team's name.
   const name = $('#meta h1').text().trim();
 
-  // Check if we got to a player's page or not.
-  /* Just typing "LeBron" automatically redirects to his page. It's pretty
-    funny because as far as I can tell this is a entirely unique case. I might
-    just leave it as a "feature" or code in something for it up top */
+  // Check if we got to a team's page or not.
   if (name.length <= 0) {
     throw new Error(
       'Search query provided no results. Make sure your search query works at https://basketball-reference.com/'
     );
-  } else if (!/player/.test(firstResultHREF)) {
-    throw new Error(
-      'Search query responded with a non-player result. Make sure your search query works at https://basketball-reference.com/'
-    );
   }
 
-  return firstResultHTML;
+  const bio = $('#meta > div:nth-child(2) > p');
+
+  let location = '';
+  const teamNames = [];
+  let wins = -1;
+  let losses = -1;
+  let win_pct = 0.0;
+  let playoffAppearances = -1;
+  let championships = -1;
+
+  bio.each((index, element) => {
+    const elementData = $(element);
+    const elementText = $(element).text();
+
+    if (/Location:/.test(elementText)) {
+      // Grab the location
+      location = elementText.trim().slice(10).trim();
+    } else if (/Team Names:/.test(elementText)) {
+      // Grab all team names.
+      // I am trimming the start because sometimes there's weird whitespace
+      const teams = elementText.trim().slice(11);
+      const teamList = teams.split(',');
+      for (let i = 0; i < teamList.length; i++) {
+        teamNames.push(teamList[i].trim());
+      }
+    } else if (/Record:/.test(elementText)) {
+      // Grab the wins, losees, and win%
+      [wins, losses] = elementText.match(/\d+/g);
+      win_pct = parseFloat(elementText.match(/\.\d+/g)[0]);
+      wins = parseInt(wins);
+      losses = parseInt(losses);
+    } else if (/Playoff Appearances:/.test(elementText)) {
+      // Grab playoff appearances
+      playoffAppearances = parseInt(elementText.match(/\d+/)[0]);
+    } else if (/Championships:/.test(elementText)) {
+      // Grab championships
+      championships = parseInt(elementText.match(/\d+/)[0]);
+    }
+  });
+
+  return championships;
 }
 
 module.exports = getTeam;

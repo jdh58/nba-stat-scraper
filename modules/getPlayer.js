@@ -35,6 +35,10 @@ async function getPlayer(playerName) {
       throw new Error(
         'Search query provided no players. Make sure your search query works at https://basketball-reference.com/'
       );
+    } else if (!/player/.test(firstResultHREF)) {
+      throw new Error(
+        'Search query responded with a non-player result. Make sure your search query works at https://basketball-reference.com/'
+      );
     }
 
     // Grab the player's accolades
@@ -78,7 +82,7 @@ async function getPlayer(playerName) {
     let draftYear = -1;
     let draftTeam = '';
     const positions = [];
-    let shooting_hand = '';
+    let shootingHand = '';
     let college = '';
     let birthplace = '';
     let birthdate = '';
@@ -110,7 +114,7 @@ async function getPlayer(playerName) {
             /Guard|Center|Forward|Small Forward|Point Guard|Shooting Guard|Power Forward/g
           )
         );
-        shooting_hand = elementText.match(/Right|Left/g)[0];
+        shootingHand = elementText.match(/Right|Left/g)[0];
       } else if (/^College/.test(elementText)) {
         // College check
         college = elementText.slice(9).trim();
@@ -325,7 +329,7 @@ async function getPlayer(playerName) {
       allStars,
       accolades,
       stats,
-      shooting_hand,
+      shootingHand,
       college,
       birthplace,
       birthdate,
