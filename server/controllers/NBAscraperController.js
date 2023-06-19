@@ -33,7 +33,8 @@ const getPlayer = async (req, res) => {
       accolades.push(accoladeElement.text());
     });
 
-    // FIND THESE IN A MORE PROGRAMMATIC WAY THE NTH CHILD SHIT MOVES AROUND ARGH
+    // Grab the player's name.
+    const name = $('#meta h1').text().trim();
 
     // Now fetch nicknames
     const playerInfoContainer = $('#meta div:nth-child(2)');
@@ -164,7 +165,14 @@ const getPlayer = async (req, res) => {
       }
     });
 
-    res.send(stats);
+    // Finally, get the player's NBA.com id and headshot
+    const playerID = $('#div_stats-nba-com > div > a:nth-child(1)')
+      .attr('href')
+      .match(/\d+/)[0];
+
+    const headshotURL = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
+
+    res.send(headshotURL);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
