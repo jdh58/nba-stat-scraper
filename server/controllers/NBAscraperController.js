@@ -38,49 +38,85 @@ const getPlayer = async (req, res) => {
     // Now fetch nicknames
     const playerInfoContainer = $('#meta div:nth-child(2)');
     const nicknames = [];
+    let pickNum = -1;
+    let draftYear = -1;
+    const positions = [];
+    let shooting_hand = '';
+
+    const playerInfoElements = playerInfoContainer.find('p');
+
+    playerInfoElements.each((index, element) => {
+      const elementText = $(element).text().trim();
+
+      if (/^\(.*\)$/.test(elementText)) {
+        // Nickname check
+        const nicknameList = elementText;
+        const nicknameArr = nicknameList.replace(/[()\n]/g, '').split(',');
+        for (let i = 0; i < nicknameArr.length; i++) {
+          nicknames.push(nicknameArr[i].trim());
+        }
+      } else if (/^Draft/.test(elementText)) {
+        // Draft check
+        // This returns the number occurences in the draft string
+        pickNum = elementText.match(/\d+/g)[2];
+        draftYear = elementText.match(/\d+/g)[3];
+      } else if (/^Position/.test(elementText)) {
+        // Position and handedness check
+        positions.push(
+          ...elementText.match(
+            /Guard|Center|Forward|Small Forward|Point Guard|Shooting Guard|Power Forward/g
+          )
+        );
+        shooting_hand = elementText.match(/Right|Left/g)[0];
+      }
+    });
+
+    console.log(nicknames);
+    console.log(pickNum);
+    console.log(draftYear);
+    console.log(positions);
+    console.log(shooting_hand);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
     or b) No nicknames listed */
-    let nicknameList;
+    // let nicknameList;
 
-    // If the first row is pronunciation
-    if (
-      /Pronunciation/.test(playerInfoContainer.find('p:nth-child(2)').text())
-    ) {
-      // Then nicknames will be the 4th child. If they aren't then there are no nicknames.
-      if (
-        /^\(.*\)$/.test(
-          playerInfoContainer.find('p:nth-child(4)').text().trim()
-        )
-      ) {
-        nicknameList = playerInfoContainer.find('p:nth-child(4)').text();
-      } else {
-        nicknameList = null;
-      }
-    } else {
-      // If there is no pronunciation row, then nicknames will be the 3rd child.
-      // If they aren't, then there are no nicknames.
-      if (
-        /^\(.*\)$/.test(
-          playerInfoContainer.find('p:nth-child(3)').text().trim()
-        )
-      ) {
-        nicknameList = playerInfoContainer.find('p:nth-child(3)').text();
-      } else {
-        nicknameList = null;
-      }
-    }
+    // // If the first row is pronunciation
+    // if (
+    //   /Pronunciation/.test(playerInfoContainer.find('p:nth-child(2)').text())
+    // ) {
+    //   // Then nicknames will be the 4th child. If they aren't then there are no nicknames.
+    //   if (
+    //     /^\(.*\)$/.test(
+    //       playerInfoContainer.find('p:nth-child(4)').text().trim()
+    //     )
+    //   ) {
+    //     nicknameList = playerInfoContainer.find('p:nth-child(4)').text();
+    //   } else {
+    //     nicknameList = null;
+    //   }
+    // } else {
+    //   // If there is no pronunciation row, then nicknames will be the 3rd child.
+    //   // If they aren't, then there are no nicknames.
+    //   if (
+    //     /^\(.*\)$/.test(
+    //       playerInfoContainer.find('p:nth-child(3)').text().trim()
+    //     )
+    //   ) {
+    //     nicknameList = playerInfoContainer.find('p:nth-child(3)').text();
+    //   } else {
+    //     nicknameList = null;
+    //   }
+    // }
 
-    if (nicknameList) {
-      const nicknameArr = nicknameList.replace(/[()\n]/g, '').split(',');
+    // if (nicknameList) {
+    //   const nicknameArr = nicknameList.replace(/[()\n]/g, '').split(',');
 
-      for (let i = 0; i < nicknameArr.length; i++) {
-        nicknames.push(nicknameArr[i].trim());
-      }
-    }
-
-    console.log(nicknames);
+    //   for (let i = 0; i < nicknameArr.length; i++) {
+    //     nicknames.push(nicknameArr[i].trim());
+    //   }
+    // }
 
     // // Now get place of birth
     // const birthplaceElement = $('#meta')
