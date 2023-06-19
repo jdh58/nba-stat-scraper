@@ -1,9 +1,8 @@
-import cheerio from 'cheerio';
+const cheerio = require('cheerio');
 
-const getPlayer = async (req, res) => {
+const getPlayer = async (playerName) => {
   try {
     // Grab player's name from URL and format it for BBREF
-    let playerName = req.params.playerName;
     let [first, last] = playerName.split('_');
 
     const searchResponse = await fetch(
@@ -171,11 +170,9 @@ const getPlayer = async (req, res) => {
       .match(/\d+/)[0];
 
     const headshotURL = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
-
-    res.send(headshotURL);
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }
 };
 
-export { getPlayer };
+module.exports = getPlayer;
