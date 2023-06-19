@@ -5,7 +5,6 @@ const getPlayer = async (playerName) => {
     // Grab player's name from URL and format it for BBREF
     const searchQuery = encodeURIComponent(playerName);
 
-    console.log(searchQuery);
     const searchResponse = await fetch(
       `https://www.basketball-reference.com/search/?&search=${searchQuery}`
     );
@@ -17,8 +16,6 @@ const getPlayer = async (playerName) => {
       .first()
       .find('.search-item-url')
       .text();
-
-    console.log(firstResultHREF);
 
     const firstResult = await fetch(
       `https://www.basketball-reference.com/${firstResultHREF}`
@@ -46,10 +43,32 @@ const getPlayer = async (playerName) => {
 
     // Grab the player's accolades
     const accolades = [];
-    const accoladeList = $('#bling');
+    let championships = 0;
+    let mvps = 0;
+    const accoladeList = $('#bling > li');
 
-    accoladeList.children().each((index, accolade) => {
+    accoladeList.each((index, accolade) => {
       const accoladeElement = $(accolade);
+      const accoladeText = $(accolade).text();
+
+      if (/NBA Champ$/.test(accoladeText)) {
+        // If it doesn't have an x in it, it's 1 time
+        if (!/x/.test(accoladeText)) {
+          championships = 1;
+        } else {
+          championships = parseInt(accoladeText.match(/^\d+/)[0]);
+        }
+      } else if (/^\d{4}-\d{2} MVP$|^\d+x MVP$/.test(accoladeText)) {
+        console.log(accoladeText);
+        // This RegExonly matches MVPs. Not WCF MVPs or ASG or anything
+        // And here the logic is very similar to the championships
+        if (!/x/.test(accoladeText)) {
+          mvps = 1;
+        } else {
+          mvps = parseInt(accoladeText.match(/^\d+/)[0]);
+        }
+      }
+
       accolades.push(accoladeElement.text());
     });
 
@@ -114,17 +133,6 @@ const getPlayer = async (playerName) => {
         debut = elementText.slice(11).trim();
       }
     });
-
-    console.log(nicknames);
-    console.log(draftPick);
-    console.log(draftYear);
-    console.log(positions);
-    console.log(shooting_hand);
-    console.log(college);
-    console.log(draftTeam);
-    console.log(birthplace);
-    console.log(birthdate);
-    console.log(debut);
 
     const statContainer = $('#div_per_game tbody > tr');
     const stats = {};
@@ -200,6 +208,8 @@ const getPlayer = async (playerName) => {
       picture,
       positions,
       nicknames,
+      championships,
+      mvps,
       accolades,
       stats,
       shooting_hand,
