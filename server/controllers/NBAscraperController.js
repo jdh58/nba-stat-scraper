@@ -40,6 +40,7 @@ const getPlayer = async (req, res) => {
     const nicknames = [];
     let pickNum = -1;
     let draftYear = -1;
+    let draftTeam = '';
     const positions = [];
     let shooting_hand = '';
     let college = '';
@@ -62,6 +63,7 @@ const getPlayer = async (req, res) => {
         // This returns the number occurences in the draft string
         pickNum = elementText.match(/\d+/g)[2];
         draftYear = elementText.match(/\d+/g)[3];
+        draftTeam = elementData.find('a:nth-child(2)').text().trim();
       } else if (/^Position/.test(elementText)) {
         // Position and handedness check
         positions.push(
@@ -71,6 +73,7 @@ const getPlayer = async (req, res) => {
         );
         shooting_hand = elementText.match(/Right|Left/g)[0];
       } else if (/^College/.test(elementText)) {
+        // College check
         college = elementText.slice(9).trim();
       }
     });
@@ -81,6 +84,7 @@ const getPlayer = async (req, res) => {
     console.log(positions);
     console.log(shooting_hand);
     console.log(college);
+    console.log(draftTeam);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
