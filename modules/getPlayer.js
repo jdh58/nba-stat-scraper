@@ -56,7 +56,7 @@ const getPlayer = async (playerName) => {
     // Now fetch nicknames
     const playerInfoContainer = $('#meta div:nth-child(2)');
     const nicknames = [];
-    let pickNum = -1;
+    let draftPick = -1;
     let draftYear = -1;
     let draftTeam = '';
     const positions = [];
@@ -82,7 +82,7 @@ const getPlayer = async (playerName) => {
       } else if (/^Draft/.test(elementText)) {
         // Draft check
         // This returns the number occurences in the draft string
-        pickNum = elementText.match(/\d+/g)[2];
+        draftPick = elementText.match(/\d+/g)[2];
         draftYear = elementText.match(/\d+/g)[3];
         draftTeam = elementData.find('a:nth-child(2)').text().trim();
       } else if (/^Position/.test(elementText)) {
@@ -106,7 +106,9 @@ const getPlayer = async (playerName) => {
         birthdate = elementData
           .find('span:nth-child(2)')
           .text()
-          .replace(/[\r\t\n\f]/g, '')
+          .replace(/\s/g, '') // Weird whitespace so I'll make my own
+          .replace(/(\d+)/, ' $1') // Put a space before the day
+          .replace(/(\d+)$/, ' $1') // Put a space before the year
           .trim();
       } else if (/^NBA Debut/.test(elementText)) {
         debut = elementText.slice(11).trim();
@@ -114,7 +116,7 @@ const getPlayer = async (playerName) => {
     });
 
     console.log(nicknames);
-    console.log(pickNum);
+    console.log(draftPick);
     console.log(draftYear);
     console.log(positions);
     console.log(shooting_hand);
@@ -191,7 +193,26 @@ const getPlayer = async (playerName) => {
       playerID = '';
     }
 
-    const headshotURL = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
+    const picture = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
+
+    const player = {
+      name,
+      picture,
+      positions,
+      nicknames,
+      accolades,
+      stats,
+      shooting_hand,
+      college,
+      birthplace,
+      birthdate,
+      draftPick,
+      draftYear,
+      draftTeam,
+      debut,
+    };
+
+    return player;
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }
