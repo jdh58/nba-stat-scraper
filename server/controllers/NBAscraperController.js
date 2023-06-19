@@ -42,11 +42,13 @@ const getPlayer = async (req, res) => {
     let draftYear = -1;
     const positions = [];
     let shooting_hand = '';
+    let college = '';
 
     const playerInfoElements = playerInfoContainer.find('p');
 
     playerInfoElements.each((index, element) => {
       const elementText = $(element).text().trim();
+      const elementData = $(element);
 
       if (/^\(.*\)$/.test(elementText)) {
         // Nickname check
@@ -68,6 +70,8 @@ const getPlayer = async (req, res) => {
           )
         );
         shooting_hand = elementText.match(/Right|Left/g)[0];
+      } else if (/^College/.test(elementText)) {
+        college = elementText.slice(9).trim();
       }
     });
 
@@ -76,6 +80,7 @@ const getPlayer = async (req, res) => {
     console.log(draftYear);
     console.log(positions);
     console.log(shooting_hand);
+    console.log(college);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
