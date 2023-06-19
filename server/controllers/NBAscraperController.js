@@ -46,6 +46,7 @@ const getPlayer = async (req, res) => {
     let college = '';
     let birthplace = '';
     let birthdate = '';
+    let debut = '';
 
     const playerInfoElements = playerInfoContainer.find('p');
 
@@ -87,8 +88,10 @@ const getPlayer = async (req, res) => {
         birthdate = elementData
           .find('span:nth-child(2)')
           .text()
-          .replace(/[\r\t\n]/g, '')
+          .replace(/[\r\t\n\f]/g, '')
           .trim();
+      } else if (/^NBA Debut/.test(elementText)) {
+        debut = elementText.slice(11).trim();
       }
     });
 
@@ -101,6 +104,7 @@ const getPlayer = async (req, res) => {
     console.log(draftTeam);
     console.log(birthplace);
     console.log(birthdate);
+    console.log(debut);
 
     res.send(birthdate);
 
