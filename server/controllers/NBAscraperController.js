@@ -44,6 +44,8 @@ const getPlayer = async (req, res) => {
     const positions = [];
     let shooting_hand = '';
     let college = '';
+    let birthplace = '';
+    let birthdate = '';
 
     const playerInfoElements = playerInfoContainer.find('p');
 
@@ -75,6 +77,18 @@ const getPlayer = async (req, res) => {
       } else if (/^College/.test(elementText)) {
         // College check
         college = elementText.slice(9).trim();
+      } else if (/^Born/.test(elementText)) {
+        // Born info check
+        birthplace = elementData
+          .find('span:nth-child(3)')
+          .text()
+          .trim()
+          .slice(3);
+        birthdate = elementData
+          .find('span:nth-child(2)')
+          .text()
+          .replace(/[\r\t\n]/g, '')
+          .trim();
       }
     });
 
@@ -85,6 +99,10 @@ const getPlayer = async (req, res) => {
     console.log(shooting_hand);
     console.log(college);
     console.log(draftTeam);
+    console.log(birthplace);
+    console.log(birthdate);
+
+    res.send(birthdate);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
@@ -145,8 +163,6 @@ const getPlayer = async (req, res) => {
     // const draftYear = draftElement.match(/\d+/g)[3];
 
     // console.log(draftElement);
-
-    res.send('das');
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }
