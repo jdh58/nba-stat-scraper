@@ -51,8 +51,8 @@ const getPlayer = async (req, res) => {
     const playerInfoElements = playerInfoContainer.find('p');
 
     playerInfoElements.each((index, element) => {
-      const elementText = $(element).text().trim();
       const elementData = $(element);
+      const elementText = $(element).text().trim();
 
       if (/^\(.*\)$/.test(elementText)) {
         // Nickname check
@@ -106,7 +106,60 @@ const getPlayer = async (req, res) => {
     console.log(birthdate);
     console.log(debut);
 
-    res.send(birthdate);
+    const statContainer = $('#div_per_game tbody > tr');
+    const stats = {};
+
+    statContainer.each((index, row) => {
+      const rowData = $(row);
+
+      /* Check if the stats for this year are already generated. If they are,
+      that means that the player has played for multiple teams in one year.
+      Keep the total stats the same, just update the teams. */
+      if (stats[rowData.find('th').text().trim()]) {
+        stats[rowData.find('th').text().trim()].teams = [
+          ...stats[rowData.find('th').text().trim()].teams,
+          rowData.find('[data-stat="team_id"]').text().trim(),
+        ];
+      } else {
+        stats[rowData.find('th').text().trim()] = {
+          age: rowData.find('[data-stat="age"]').text().trim(),
+          teams:
+            // If the team id is "TOT", they got traded, so it's a special case.
+            rowData.find('[data-stat="team_id"]').text().trim() === 'TOT'
+              ? []
+              : [rowData.find('[data-stat="team_id"]').text().trim()],
+          league: rowData.find('[data-stat="lg_id"]').text().trim(),
+          position: rowData.find('[data-stat="pos"]').text().trim(),
+          games: rowData.find('[data-stat="g"]').text().trim(),
+          games_started: rowData.find('[data-stat="gs"]').text().trim(),
+          mpg: rowData.find('[data-stat="mp_per_g"]').text().trim(),
+          fg: rowData.find('[data-stat="fg_per_g"]').text().trim(),
+          fga: rowData.find('[data-stat="fga_per_g"]').text().trim(),
+          fg_pct: rowData.find('[data-stat="fg_pct"]').text().trim(),
+          '3p': rowData.find('[data-stat="fg3_per_g"]').text().trim(),
+          '3pa': rowData.find('[data-stat="fg3a_per_g"]').text().trim(),
+          '3p_pct': rowData.find('[data-stat="fg3_pct"]').text().trim(),
+          '2p': rowData.find('[data-stat="fg2_per_g"]').text().trim(),
+          '2pa': rowData.find('[data-stat="fg2a_per_g"]').text().trim(),
+          '2p_pct': rowData.find('[data-stat="fg2_pct"]').text().trim(),
+          efg: rowData.find('[data-stat="efg_pct"]').text().trim(),
+          ft: rowData.find('[data-stat="ft_per_g"]').text().trim(),
+          fta: rowData.find('[data-stat="fta_per_g"]').text().trim(),
+          ft_pct: rowData.find('[data-stat="ft_pct"]').text().trim(),
+          orb: rowData.find('[data-stat="orb_per_g"]').text().trim(),
+          drb: rowData.find('[data-stat="drb_per_g"]').text().trim(),
+          trb: rowData.find('[data-stat="trb_per_g"]').text().trim(),
+          ast: rowData.find('[data-stat="ast_per_g"]').text().trim(),
+          stl: rowData.find('[data-stat="stl_per_g"]').text().trim(),
+          bpg: rowData.find('[data-stat="blk_per_g"]').text().trim(),
+          tpg: rowData.find('[data-stat="tov_per_g"]').text().trim(),
+          pf: rowData.find('[data-stat="pf_per_g"]').text().trim(),
+          ppg: rowData.find('[data-stat="pts_per_g"]').text().trim(),
+        };
+      }
+    });
+
+    res.send(stats);
 
     /* nicknameList will be dependent on if the player's page has
     a) First row as a pronunciation
