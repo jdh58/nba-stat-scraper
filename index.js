@@ -3,5 +3,5 @@ const getTeam = require('./modules/getTeam');
 
 (async () => {
   const banana = await getTeam('atlanta hawks');
-  console.log(banana);
+  console.log(JSON.parse(banana));
 })();

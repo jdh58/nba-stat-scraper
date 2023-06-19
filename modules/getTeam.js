@@ -32,6 +32,7 @@ async function getTeam(teamName) {
     );
   }
 
+  // First, grab all the basic information from the team's bio
   const bio = $('#meta > div:nth-child(2) > p');
 
   let location = '';
@@ -72,7 +73,23 @@ async function getTeam(teamName) {
     }
   });
 
-  return championships;
+  // Lastly, grab the team's logo
+  const logo = $('#meta > .logo > .teamLogo').attr('src');
+
+  // Return all the info in a team object
+  const team = {
+    name,
+    logo,
+    location,
+    teamNames,
+    wins,
+    losses,
+    win_pct,
+    playoffAppearances,
+    championships,
+  };
+
+  return JSON.stringify(team);
 }
 
 module.exports = getTeam;
