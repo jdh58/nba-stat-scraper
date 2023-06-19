@@ -34,39 +34,74 @@ const getPlayer = async (req, res) => {
     });
 
     // FIND THESE IN A MORE PROGRAMMATIC WAY THE NTH CHILD SHIT MOVES AROUND ARGH
+
     // Now fetch nicknames
+    const playerInfoContainer = $('#meta div:nth-child(2)');
     const nicknames = [];
-    const nicknameList = $('#meta')
-      .children(':nth-child(2)')
-      .children(':nth-child(3)')
-      .text();
 
-    const nicknameArr = nicknameList.replace(/[()\n]/g, '').split(',');
+    /* nicknameList will be dependent on if the player's page has
+    a) First row as a pronunciation
+    or b) No nicknames listed */
+    let nicknameList;
 
-    for (let i = 0; i < nicknameArr.length; i++) {
-      nicknames.push(nicknameArr[i].trim());
+    // If the first row is pronunciation
+    if (
+      /Pronunciation/.test(playerInfoContainer.find('p:nth-child(2)').text())
+    ) {
+      // Then nicknames will be the 4th child. If they aren't then there are no nicknames.
+      if (
+        /^\(.*\)$/.test(
+          playerInfoContainer.find('p:nth-child(4)').text().trim()
+        )
+      ) {
+        nicknameList = playerInfoContainer.find('p:nth-child(4)').text();
+      } else {
+        nicknameList = null;
+      }
+    } else {
+      // If there is no pronunciation row, then nicknames will be the 3rd child.
+      // If they aren't, then there are no nicknames.
+      if (
+        /^\(.*\)$/.test(
+          playerInfoContainer.find('p:nth-child(3)').text().trim()
+        )
+      ) {
+        nicknameList = playerInfoContainer.find('p:nth-child(3)').text();
+      } else {
+        nicknameList = null;
+      }
     }
 
-    // Now get place of birth
-    const birthplaceElement = $('#meta')
-      .children(':nth-child(2)')
-      .children(':nth-child(6)')
-      .children(':nth-child(3)')
-      .text();
-    const birthplace = birthplaceElement.trim().slice(3);
+    if (nicknameList) {
+      const nicknameArr = nicknameList.replace(/[()\n]/g, '').split(',');
 
-    // Draft pick and first year
-    const draftRegex = /\d+ NBA Draft/;
-    const draftElement = $('a:contains("NBA Draft")').text();
+      for (let i = 0; i < nicknameArr.length; i++) {
+        nicknames.push(nicknameArr[i].trim());
+      }
+    }
+
+    console.log(nicknames);
+
+    // // Now get place of birth
+    // const birthplaceElement = $('#meta')
+    //   .children(':nth-child(2)')
+    //   .children(':nth-child(6)')
+    //   .children(':nth-child(3)')
+    //   .text();
+    // const birthplace = birthplaceElement.trim().slice(3);
+
+    // // Draft pick and first year
+    // const draftRegex = /\d+ NBA Draft/;
+    // const draftElement = $('a:contains("NBA Draft")').text();
     // const pickRegex = /\d+ NBA Draft/;
     // const draftElement = $('p:contains("NBA Draft")').text();
 
     // const pickNum = draftElement.match(/\d+/g)[2];
     // const draftYear = draftElement.match(/\d+/g)[3];
 
-    console.log(draftElement);
+    // console.log(draftElement);
 
-    res.send(birthplace);
+    res.send('das');
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }
