@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 
-const getPlayer = async (playerName) => {
+async function getPlayer(playerName) {
   try {
     // Grab player's name from URL and format it for BBREF
     const searchQuery = encodeURIComponent(playerName);
@@ -104,8 +104,8 @@ const getPlayer = async (playerName) => {
       } else if (/^Draft/.test(elementText)) {
         // Draft check
         // This returns the number occurences in the draft string
-        draftPick = elementText.match(/\d+/g)[2];
-        draftYear = elementText.match(/\d+/g)[3];
+        draftPick = parseInt(elementText.match(/\d+/g)[2]);
+        draftYear = parseInt(elementText.match(/\d+/g)[3]);
         draftTeam = elementData.find('a:nth-child(2)').text().trim();
       } else if (/^Position/.test(elementText)) {
         // Position and handedness check
@@ -125,15 +125,11 @@ const getPlayer = async (playerName) => {
           .text()
           .trim()
           .slice(3);
-        birthdate = elementData
-          .find('span:nth-child(2)')
-          .text()
-          .replace(/\s/g, '') // Weird whitespace so I'll make my own
-          .replace(/(\d+)/, ' $1') // Put a space before the day
-          .replace(/(\d+)$/, ' $1') // Put a space before the year
-          .trim();
+        birthdate = new Date(
+          elementData.find('span:nth-child(2)').text().trim()
+        );
       } else if (/^NBA Debut/.test(elementText)) {
-        debut = elementText.slice(11).trim();
+        debut = new Date(elementText.slice(11).trim());
       }
     });
 
@@ -159,38 +155,76 @@ const getPlayer = async (playerName) => {
         ];
       } else {
         stats[rowData.find('th').text().trim()] = {
-          age: rowData.find('[data-stat="age"]').text().trim(),
+          age: parseFloat(rowData.find('[data-stat="age"]').text().trim()),
           teams:
             // If the team id is "TOT", they got traded, so it's a special case.
             rowData.find('[data-stat="team_id"]').text().trim() === 'TOT'
               ? []
               : [rowData.find('[data-stat="team_id"]').text().trim()],
           position: rowData.find('[data-stat="pos"]').text().trim(),
-          games: rowData.find('[data-stat="g"]').text().trim(),
-          games_started: rowData.find('[data-stat="gs"]').text().trim(),
-          mpg: rowData.find('[data-stat="mp_per_g"]').text().trim(),
-          fg: rowData.find('[data-stat="fg_per_g"]').text().trim(),
-          fga: rowData.find('[data-stat="fga_per_g"]').text().trim(),
-          fg_pct: rowData.find('[data-stat="fg_pct"]').text().trim(),
-          '3p': rowData.find('[data-stat="fg3_per_g"]').text().trim(),
-          '3pa': rowData.find('[data-stat="fg3a_per_g"]').text().trim(),
-          '3p_pct': rowData.find('[data-stat="fg3_pct"]').text().trim(),
-          '2p': rowData.find('[data-stat="fg2_per_g"]').text().trim(),
-          '2pa': rowData.find('[data-stat="fg2a_per_g"]').text().trim(),
-          '2p_pct': rowData.find('[data-stat="fg2_pct"]').text().trim(),
-          efg: rowData.find('[data-stat="efg_pct"]').text().trim(),
-          ft: rowData.find('[data-stat="ft_per_g"]').text().trim(),
-          fta: rowData.find('[data-stat="fta_per_g"]').text().trim(),
-          ft_pct: rowData.find('[data-stat="ft_pct"]').text().trim(),
-          orb: rowData.find('[data-stat="orb_per_g"]').text().trim(),
-          drb: rowData.find('[data-stat="drb_per_g"]').text().trim(),
-          trb: rowData.find('[data-stat="trb_per_g"]').text().trim(),
-          ast: rowData.find('[data-stat="ast_per_g"]').text().trim(),
-          stl: rowData.find('[data-stat="stl_per_g"]').text().trim(),
-          bpg: rowData.find('[data-stat="blk_per_g"]').text().trim(),
-          tpg: rowData.find('[data-stat="tov_per_g"]').text().trim(),
-          pf: rowData.find('[data-stat="pf_per_g"]').text().trim(),
-          ppg: rowData.find('[data-stat="pts_per_g"]').text().trim(),
+          games: parseInt(rowData.find('[data-stat="g"]').text().trim()),
+          games_started: parseInt(
+            rowData.find('[data-stat="gs"]').text().trim()
+          ),
+          mpg: parseFloat(rowData.find('[data-stat="mp_per_g"]').text().trim()),
+          fg: parseFloat(rowData.find('[data-stat="fg_per_g"]').text().trim()),
+          fga: parseFloat(
+            rowData.find('[data-stat="fga_per_g"]').text().trim()
+          ),
+          fg_pct: parseFloat(
+            rowData.find('[data-stat="fg_pct"]').text().trim()
+          ),
+          '3p': parseFloat(
+            rowData.find('[data-stat="fg3_per_g"]').text().trim()
+          ),
+          '3pa': parseFloat(
+            rowData.find('[data-stat="fg3a_per_g"]').text().trim()
+          ),
+          '3p_pct': parseFloat(
+            rowData.find('[data-stat="fg3_pct"]').text().trim()
+          ),
+          '2p': parseFloat(
+            rowData.find('[data-stat="fg2_per_g"]').text().trim()
+          ),
+          '2pa': parseFloat(
+            rowData.find('[data-stat="fg2a_per_g"]').text().trim()
+          ),
+          '2p_pct': parseFloat(
+            rowData.find('[data-stat="fg2_pct"]').text().trim()
+          ),
+          efg: parseFloat(rowData.find('[data-stat="efg_pct"]').text().trim()),
+          ft: parseFloat(rowData.find('[data-stat="ft_per_g"]').text().trim()),
+          fta: parseFloat(
+            rowData.find('[data-stat="fta_per_g"]').text().trim()
+          ),
+          ft_pct: parseFloat(
+            rowData.find('[data-stat="ft_pct"]').text().trim()
+          ),
+          orb: parseFloat(
+            rowData.find('[data-stat="orb_per_g"]').text().trim()
+          ),
+          drb: parseFloat(
+            rowData.find('[data-stat="drb_per_g"]').text().trim()
+          ),
+          trb: parseFloat(
+            rowData.find('[data-stat="trb_per_g"]').text().trim()
+          ),
+          ast: parseFloat(
+            rowData.find('[data-stat="ast_per_g"]').text().trim()
+          ),
+          stl: parseFloat(
+            rowData.find('[data-stat="stl_per_g"]').text().trim()
+          ),
+          bpg: parseFloat(
+            rowData.find('[data-stat="blk_per_g"]').text().trim()
+          ),
+          tpg: parseFloat(
+            rowData.find('[data-stat="tov_per_g"]').text().trim()
+          ),
+          pf: parseFloat(rowData.find('[data-stat="pf_per_g"]').text().trim()),
+          ppg: parseFloat(
+            rowData.find('[data-stat="pts_per_g"]').text().trim()
+          ),
         };
       }
     });
@@ -199,31 +233,79 @@ const getPlayer = async (playerName) => {
     const careerStatsRow = $('#div_per_game tfoot > tr').first();
 
     stats.career = {
-      games: careerStatsRow.find('[data-stat="g"]').text().trim(),
-      games_started: careerStatsRow.find('[data-stat="gs"]').text().trim(),
-      mpg: careerStatsRow.find('[data-stat="mp_per_g"]').text().trim(),
-      fg: careerStatsRow.find('[data-stat="fg_per_g"]').text().trim(),
-      fga: careerStatsRow.find('[data-stat="fga_per_g"]').text().trim(),
-      fg_pct: careerStatsRow.find('[data-stat="fg_pct"]').text().trim(),
-      '3p': careerStatsRow.find('[data-stat="fg3_per_g"]').text().trim(),
-      '3pa': careerStatsRow.find('[data-stat="fg3a_per_g"]').text().trim(),
-      '3p_pct': careerStatsRow.find('[data-stat="fg3_pct"]').text().trim(),
-      '2p': careerStatsRow.find('[data-stat="fg2_per_g"]').text().trim(),
-      '2pa': careerStatsRow.find('[data-stat="fg2a_per_g"]').text().trim(),
-      '2p_pct': careerStatsRow.find('[data-stat="fg2_pct"]').text().trim(),
-      efg: careerStatsRow.find('[data-stat="efg_pct"]').text().trim(),
-      ft: careerStatsRow.find('[data-stat="ft_per_g"]').text().trim(),
-      fta: careerStatsRow.find('[data-stat="fta_per_g"]').text().trim(),
-      ft_pct: careerStatsRow.find('[data-stat="ft_pct"]').text().trim(),
-      orb: careerStatsRow.find('[data-stat="orb_per_g"]').text().trim(),
-      drb: careerStatsRow.find('[data-stat="drb_per_g"]').text().trim(),
-      trb: careerStatsRow.find('[data-stat="trb_per_g"]').text().trim(),
-      ast: careerStatsRow.find('[data-stat="ast_per_g"]').text().trim(),
-      stl: careerStatsRow.find('[data-stat="stl_per_g"]').text().trim(),
-      bpg: careerStatsRow.find('[data-stat="blk_per_g"]').text().trim(),
-      tpg: careerStatsRow.find('[data-stat="tov_per_g"]').text().trim(),
-      pf: careerStatsRow.find('[data-stat="pf_per_g"]').text().trim(),
-      ppg: careerStatsRow.find('[data-stat="pts_per_g"]').text().trim(),
+      games: parseInt(careerStatsRow.find('[data-stat="g"]').text().trim()),
+      games_started: parseInt(
+        careerStatsRow.find('[data-stat="gs"]').text().trim()
+      ),
+      mpg: parseFloat(
+        careerStatsRow.find('[data-stat="mp_per_g"]').text().trim()
+      ),
+      fg: parseFloat(
+        careerStatsRow.find('[data-stat="fg_per_g"]').text().trim()
+      ),
+      fga: parseFloat(
+        careerStatsRow.find('[data-stat="fga_per_g"]').text().trim()
+      ),
+      fg_pct: parseFloat(
+        careerStatsRow.find('[data-stat="fg_pct"]').text().trim()
+      ),
+      '3p': parseFloat(
+        careerStatsRow.find('[data-stat="fg3_per_g"]').text().trim()
+      ),
+      '3pa': parseFloat(
+        careerStatsRow.find('[data-stat="fg3a_per_g"]').text().trim()
+      ),
+      '3p_pct': parseFloat(
+        careerStatsRow.find('[data-stat="fg3_pct"]').text().trim()
+      ),
+      '2p': parseFloat(
+        careerStatsRow.find('[data-stat="fg2_per_g"]').text().trim()
+      ),
+      '2pa': parseFloat(
+        careerStatsRow.find('[data-stat="fg2a_per_g"]').text().trim()
+      ),
+      '2p_pct': parseFloat(
+        careerStatsRow.find('[data-stat="fg2_pct"]').text().trim()
+      ),
+      efg: parseFloat(
+        careerStatsRow.find('[data-stat="efg_pct"]').text().trim()
+      ),
+      ft: parseFloat(
+        careerStatsRow.find('[data-stat="ft_per_g"]').text().trim()
+      ),
+      fta: parseFloat(
+        careerStatsRow.find('[data-stat="fta_per_g"]').text().trim()
+      ),
+      ft_pct: parseFloat(
+        careerStatsRow.find('[data-stat="ft_pct"]').text().trim()
+      ),
+      orb: parseFloat(
+        careerStatsRow.find('[data-stat="orb_per_g"]').text().trim()
+      ),
+      drb: parseFloat(
+        careerStatsRow.find('[data-stat="drb_per_g"]').text().trim()
+      ),
+      trb: parseFloat(
+        careerStatsRow.find('[data-stat="trb_per_g"]').text().trim()
+      ),
+      ast: parseFloat(
+        careerStatsRow.find('[data-stat="ast_per_g"]').text().trim()
+      ),
+      stl: parseFloat(
+        careerStatsRow.find('[data-stat="stl_per_g"]').text().trim()
+      ),
+      bpg: parseFloat(
+        careerStatsRow.find('[data-stat="blk_per_g"]').text().trim()
+      ),
+      tpg: parseFloat(
+        careerStatsRow.find('[data-stat="tov_per_g"]').text().trim()
+      ),
+      pf: parseFloat(
+        careerStatsRow.find('[data-stat="pf_per_g"]').text().trim()
+      ),
+      ppg: parseFloat(
+        careerStatsRow.find('[data-stat="pts_per_g"]').text().trim()
+      ),
     };
 
     // Finally, get the player's NBA.com id and headshot
@@ -261,6 +343,6 @@ const getPlayer = async (playerName) => {
   } catch (err) {
     console.error("Failed to fetch BBREF player's page", err);
   }
-};
+}
 
 module.exports = getPlayer;
