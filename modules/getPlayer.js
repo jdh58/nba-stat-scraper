@@ -3,27 +3,40 @@ const cheerio = require('cheerio');
 const getPlayer = async (playerName) => {
   try {
     // Grab player's name from URL and format it for BBREF
-    let [first, last] = playerName.split('_');
+    const searchQuery = encodeURIComponent(playerName);
 
+    console.log(searchQuery);
     const searchResponse = await fetch(
-      `https://www.basketball-reference.com/search/?&search=${first}+${last}`
+      `https://www.basketball-reference.com/search/?&search=${searchQuery}`
     );
     const searchResponseHTML = await searchResponse.text();
 
     let $ = cheerio.load(searchResponseHTML);
-    const firstResultHREF = $('.search-item-name')
-      .children(':nth-child(1)')
-      .children(':nth-child(1)')
-      .attr('href');
 
-    const playerResponse = await fetch(
+    const firstResultHREF = $('#players > .search-item')
+      .first()
+      .find('.search-item-url')
+      .text();
+
+    console.log(firstResultHREF);
+
+    const firstResult = await fetch(
       `https://www.basketball-reference.com/${firstResultHREF}`
     );
-    const playerResponseHTML = await playerResponse.text();
+    const firstResultHTML = await firstResult.text();
 
-    $ = cheerio.load(playerResponseHTML);
+    $ = cheerio.load(firstResultHTML);
 
-    // First, grab the player's accolades
+    // First, grab the player's name.
+    const name = $('#meta h1').text().trim();
+
+    if (name.length <= 0) {
+      throw new Error(
+        'Search query provided no results. Make sure your search query works at https://basketball-reference.com/'
+      );
+    }
+
+    // Grab the player's accolades
     const accolades = [];
     const accoladeList = $('#bling');
 
@@ -31,9 +44,6 @@ const getPlayer = async (playerName) => {
       const accoladeElement = $(accolade);
       accolades.push(accoladeElement.text());
     });
-
-    // Grab the player's name.
-    const name = $('#meta h1').text().trim();
 
     // Now fetch nicknames
     const playerInfoContainer = $('#meta div:nth-child(2)');
@@ -165,9 +175,13 @@ const getPlayer = async (playerName) => {
     });
 
     // Finally, get the player's NBA.com id and headshot
-    const playerID = $('#div_stats-nba-com > div > a:nth-child(1)')
-      .attr('href')
-      .match(/\d+/)[0];
+    let playerID = $('#div_stats-nba-com > div > a:nth-child(1)').attr('href');
+    // Null check for player that are retired or otherwise missing this link
+    if (playerID) {
+      playerID = playerID.match(/\d+/)[0];
+    } else {
+      playerID = '';
+    }
 
     const headshotURL = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
   } catch (err) {

@@ -1,3 +1,3 @@
 const getPlayer = require('./modules/getPlayer');
 
-getPlayer('Kevin_Durant');
+getPlayer('gary payton II');
