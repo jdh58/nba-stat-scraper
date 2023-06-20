@@ -129,6 +129,28 @@ async function getTeamSeason(teamName, year) {
     }
   });
 
+  const rosterRows = $('#roster > tbody > tr');
+  const roster = [];
+
+  rosterRows.each((index, element) => {
+    const elementData = $(element);
+
+    roster.push({
+      name: elementData.find('[data-stat="player"]').text(),
+      position: elementData.find('[data-stat="pos"]').text(),
+      height: elementData.find('[data-stat="height"]').text(),
+      weight: parseInt(elementData.find('[data-stat="weight"]').text()),
+      birthDate: new Date(elementData.find('[data-stat="birth_date"]').text()),
+      birthCountry: elementData.find('[data-stat="birth_country"]').text(),
+      yearsExperience:
+        // Rookies are listed as 'R', a special case. We will replace with 0
+        elementData.find('[data-stat="years_experience"]').text() === 'R'
+          ? 0
+          : parseInt(elementData.find('[data-stat="years_experience"]').text()),
+      college: elementData.find('[data-stat="college"]').text(),
+    });
+  });
+
   console.log(wins);
   console.log(losses);
   console.log(seed);
@@ -151,6 +173,7 @@ async function getTeamSeason(teamName, year) {
   console.log(playoffResult);
   console.log(name);
   console.log(season);
+  console.log(roster);
 
   // const team = {
   //   name,
