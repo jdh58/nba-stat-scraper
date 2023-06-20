@@ -1,4 +1,4 @@
-function grabCareerStats(careerStatsRow) {
+function grabCareerStats(careerStatsRow, $) {
   career = {
     games: parseInt(careerStatsRow.find('[data-stat="g"]').text().trim()),
     games_started: parseInt(
@@ -66,6 +66,13 @@ function grabCareerStats(careerStatsRow) {
       careerStatsRow.find('[data-stat="pts_per_g"]').text().trim()
     ),
   };
+
+  career.winShares = parseFloat(
+    $('.stats_pullout > .p3 > div:nth-child(2) > p:nth-child(3)').text()
+  );
+  career.per = parseFloat(
+    $('.stats_pullout > .p3 > div:nth-child(1) > p:nth-child(3)').text()
+  );
 
   return career;
 }

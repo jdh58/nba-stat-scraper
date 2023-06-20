@@ -125,7 +125,7 @@ async function getPlayer(playerName) {
     // Now get the career stats and load them
     const careerStatsRow = $('#div_per_game tfoot > tr').first();
 
-    stats.career = grabCareerStats(careerStatsRow);
+    stats.career = grabCareerStats(careerStatsRow, $);
 
     // Finally, get the player's NBA.com id and headshot
     let playerID = $('#div_stats-nba-com > div > a:nth-child(1)').attr('href');
