@@ -66,6 +66,10 @@ async function getTeamSeason(teamName, year) {
   let expL = -1;
   let preseasonOdds = -1;
   let overUnder = -1;
+  let arena = '';
+  let attendance = '';
+  const playoffs = [];
+  let playoffResult = '';
 
   // First, grab all the basic information from the team's bio
   const bio = $('#meta > div:nth-child(2) > p');
@@ -98,6 +102,21 @@ async function getTeamSeason(teamName, year) {
     } else if (/Preseason Odds:/.test(elementText)) {
       preseasonOdds = parseInt(elementText.match(/[\+-]\d+/));
       overUnder = parseFloat(elementText.match(/\d+\.\d/g)[0]);
+    } else if (/Arena:/.test(elementText)) {
+      // Weird matching... but the whitespace is janky so this works
+      arena = elementText.match(/.+/g)[2].trim();
+      attendance = parseInt(elementText.match(/\d+,\d+/)[0].replace(',', ''));
+    } else if (/NBA \d+ Playoffs/.test(elementText)) {
+      const playoffElements = elementText
+        .replace(/\(Series Stats\)/g, '')
+        .trim()
+        .split('\n');
+
+      for (let i = 1; i < playoffElements.length; i++) {
+        playoffs.push(playoffElements[i].trim());
+      }
+
+      playoffResult = playoffs[playoffs.length - 1];
     }
   });
 
@@ -117,6 +136,10 @@ async function getTeamSeason(teamName, year) {
   console.log(expL);
   console.log(preseasonOdds);
   console.log(overUnder);
+  console.log(arena);
+  console.log(attendance);
+  console.log(playoffs);
+  console.log(playoffResult);
 }
 
 module.exports = getTeamSeason;
