@@ -57,7 +57,7 @@ async function getTeamSeason(teamName, year) {
   let wins = -1;
   let losses = -1;
   let seed = -1;
-  let coach = '';
+  const coach = [];
   let executive = '';
   let ppg = -1;
   let oppg = -1;
@@ -83,7 +83,15 @@ async function getTeamSeason(teamName, year) {
       [wins, losses, seed] = elementText.match(/\d+/g);
       [wins, losses, seed] = [parseInt(wins), parseInt(losses), parseInt(seed)];
     } else if (/Coach:/.test(elementText)) {
-      coach = elementData.find('a').text();
+      // Handle multiple coach scenario
+      if (elementData.find('a').length > 1) {
+        elementData.find('a').each((index, element) => {
+          const coachText = $(element).text();
+          coach.push(coachText);
+        });
+      } else {
+        coach.push(elementData.find('a').text());
+      }
     } else if (/Executive:/.test(elementText)) {
       executive = elementData.find('a').text();
     } else if (/PTS\/G:/.test(elementText)) {
