@@ -44,7 +44,8 @@ async function getTeamSeason(teamName, year) {
 
   console.log(searchQuery);
   // First, grab the team's name.
-  const name = $('#meta h1').text().trim();
+  const name = $('#meta h1 > span:nth-child(2)').text().trim();
+  const season = $('#meta h1 > span:nth-child(1)').text().trim();
 
   // Check if we got to a team's page or not.
   if (name.length <= 0) {
@@ -140,6 +141,35 @@ async function getTeamSeason(teamName, year) {
   console.log(attendance);
   console.log(playoffs);
   console.log(playoffResult);
+  console.log(name);
+  console.log(season);
+
+  // const team = {
+  //   name,
+  //   season: "1996-97",
+  //   record:
+  //   seed:
+  //   coach:
+  //   executive:
+  //   stats: {
+  //     ppg:
+  //     oppg:
+  //     srs:
+  //     pace:
+  //     ortg:
+  //     drtg:
+  //     netrtg:
+  //     expWL:
+  //     arena:
+  //     attendance:
+  //   }
+  //   playoffs: [
+
+  //   ]
+  //   playoffResult:
+  //   champions: true|false
+  //   roster: ["boob ryan"]
+  // }
 }
 
 module.exports = getTeamSeason;
