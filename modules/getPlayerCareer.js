@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
-const grabStats = require('./grabStats');
+const grabCareerStats = require('./grabCareerStats');
 
-async function getPlayerSeason(playerName, year) {
+async function getPlayerCareer(playerName) {
   // Grab player's name from URL and format it for BBREF
   const searchQuery = encodeURIComponent(playerName);
 
@@ -33,19 +33,18 @@ async function getPlayerSeason(playerName, year) {
     );
   }
 
-  // Now grab the stats for the requested season
-  const statsRow = $(`#per_game\\.${year}`);
+  // Now grab the stats for the player's career
+  const statsRow = $('#div_per_game tbody > tr');
 
   if (statsRow.length <= 0) {
-    throw new Error(
-      'No data for that season for this player. Ensure they played during the entered year'
-    );
+    throw new Error('No career data for that player.');
   }
 
-  const stats = grabStats(statsRow, $);
+  const stats = grabCareerStats(statsRow, $);
+
   stats.name = name;
 
   return JSON.stringify(stats);
 }
 
-module.exports = getPlayerSeason;
+module.exports = getPlayerCareer;

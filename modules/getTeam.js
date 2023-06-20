@@ -77,8 +77,6 @@ async function getTeam(teamName) {
     // Grab the team's logo
     const logo = $('#meta > .logo > .teamLogo').attr('src');
 
-    // Lastly, grab the team's NBA id
-
     // Return all the info in a team object
     const team = {
       name,
