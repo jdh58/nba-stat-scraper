@@ -41,7 +41,6 @@ async function getPlayer(playerName) {
           championships = parseInt(accoladeText.match(/^\d+/)[0]);
         }
       } else if (/^\d{4}-\d{2} MVP$|^\d+x MVP$/.test(accoladeText)) {
-        console.log(accoladeText);
         // This RegExonly matches MVPs. Not WCF MVPs or ASG or anything
         // And here the logic is very similar to the championships
         if (!/x/.test(accoladeText)) {
@@ -68,6 +67,8 @@ async function getPlayer(playerName) {
     let birthplace = '';
     let birthdate = '';
     let debut = '';
+    let height = '';
+    let weight = -1;
 
     const playerInfoElements = playerInfoContainer.find('p');
 
@@ -111,6 +112,10 @@ async function getPlayer(playerName) {
         );
       } else if (/^NBA Debut/.test(elementText)) {
         debut = new Date(elementText.slice(11).trim());
+      } else if (/kg\)$/.test(elementText)) {
+        // Hieght and weight check
+        height = elementText.match(/\d-\d+/)[0];
+        weight = parseInt(elementText.match(/\d+/g)[2]);
       }
     });
 
@@ -137,6 +142,8 @@ async function getPlayer(playerName) {
       name,
       picture,
       positions,
+      height,
+      weight,
       nicknames,
       championships,
       mvps,
