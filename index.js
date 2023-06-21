@@ -4,11 +4,6 @@ const getPlayerSeason = require('./modules/getPlayerSeason');
 const getPlayerCareer = require('./modules/getPlayerCareer');
 const getTeamSeason = require('./modules/getTeamSeason');
 
-(async () => {
-  const banana = await getPlayerCareer('Damian Lillard');
-  console.log(JSON.parse(banana));
-})();
-
 module.exports = {
   getPlayer,
   getTeam,
