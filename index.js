@@ -8,3 +8,11 @@ const getTeamSeason = require('./modules/getTeamSeason');
   const banana = await getTeamSeason('cavaliers', 2016);
   console.log(JSON.parse(banana));
 })();
+
+module.exports = {
+  getPlayer,
+  getTeam,
+  getPlayerSeason,
+  getPlayerCareer,
+  getTeamSeason,
+};
