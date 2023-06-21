@@ -18,7 +18,7 @@ async function getPlayerCareer(playerName) {
   }
 
   // Now grab the stats for the player's career
-  const statsRow = $('#div_per_game tbody > tr');
+  const statsRow = $('#div_per_game tfoot > tr').first();
 
   if (statsRow.length <= 0) {
     throw new Error('No career data for that player.');

@@ -104,20 +104,22 @@ async function getTeamSeason(teamName, year) {
   rosterRows.each((index, element) => {
     const elementData = $(element);
 
-    roster.push({
-      name: elementData.find('[data-stat="player"]').text(),
-      position: elementData.find('[data-stat="pos"]').text(),
-      height: elementData.find('[data-stat="height"]').text(),
-      weight: parseInt(elementData.find('[data-stat="weight"]').text()),
-      birthDate: new Date(elementData.find('[data-stat="birth_date"]').text()),
-      birthCountry: elementData.find('[data-stat="birth_country"]').text(),
-      yearsExperience:
-        // Rookies are listed as 'R', a special case. We will replace with 0
-        elementData.find('[data-stat="years_experience"]').text() === 'R'
-          ? 0
-          : parseInt(elementData.find('[data-stat="years_experience"]').text()),
-      college: elementData.find('[data-stat="college"]').text(),
-    });
+    /* Changed this to only output name. The full stats were too much and can
+    just be found with a separate call if needed */
+    roster.push(
+      elementData.find('[data-stat="player"]').text()
+      // position: elementData.find('[data-stat="pos"]').text(),
+      // height: elementData.find('[data-stat="height"]').text(),
+      // weight: parseInt(elementData.find('[data-stat="weight"]').text()),
+      // birthDate: new Date(elementData.find('[data-stat="birth_date"]').text()),
+      // birthCountry: elementData.find('[data-stat="birth_country"]').text(),
+      // yearsExperience:
+      //   // Rookies are listed as 'R', a special case. We will replace with 0
+      //   elementData.find('[data-stat="years_experience"]').text() === 'R'
+      //     ? 0
+      //     : parseInt(elementData.find('[data-stat="years_experience"]').text()),
+      // college: elementData.find('[data-stat="college"]').text(),
+    );
   });
 
   // Save the total stats. Let the user divide if they want
