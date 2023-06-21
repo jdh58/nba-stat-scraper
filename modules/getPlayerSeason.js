@@ -27,9 +27,14 @@ async function getPlayerSeason(playerName, year) {
   }
 
   const stats = grabStats(statsRow, $);
-  stats.name = name;
+  let statObject = {};
 
-  return JSON.stringify(stats);
+  // We don't want the export to be nested in an object and named.
+  for (const season in stats) {
+    statObject = stats[season];
+  }
+
+  return JSON.stringify(statObject);
 }
 
 module.exports = getPlayerSeason;

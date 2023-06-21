@@ -5,7 +5,7 @@ const getPlayerCareer = require('./modules/getPlayerCareer');
 const getTeamSeason = require('./modules/getTeamSeason');
 
 (async () => {
-  const banana = await getTeamSeason('cavaliers', 2016);
+  const banana = await getPlayerSeason('kevin Durant', 2016);
   console.log(JSON.parse(banana));
 })();
 
