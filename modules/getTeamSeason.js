@@ -2,37 +2,7 @@ const cheerio = require('cheerio');
 const pretty = require('pretty');
 
 async function getTeamSeason(teamName, year) {
-  // ADD WINSHARES AND PER AND HEIGHT AND WEIGHT TO GET PLAYER IN CAREER
   // Get the entire bio
-  /*
-  teamSeason = {
-    name: "Boston Celtics",
-    season: "1996-97",
-    record:
-    seed: 
-    coach:
-    executive:
-    stats: {
-      ppg:
-      oppg:
-      srs:
-      pace:
-      ortg:
-      drtg:
-      netrtg:
-      expWL:
-      arena:
-      attendance: 
-    }
-    playoffs: [
-
-    ]
-    playoffResult:
-    champions: true|false
-    roster: ["boob ryan"]
-  }
-  */
-
   const searchQuery = `${year} ${teamName}`;
 
   const searchResponse = await fetch(
@@ -43,7 +13,6 @@ async function getTeamSeason(teamName, year) {
 
   $ = cheerio.load(firstResultHTML);
 
-  console.log(searchQuery);
   // First, grab the team's name.
   const name = $('#meta h1 > span:nth-child(2)').text().trim();
   const season = $('#meta h1 > span:nth-child(1)').text().trim();
@@ -96,7 +65,6 @@ async function getTeamSeason(teamName, year) {
     } else if (/Executive:/.test(elementText)) {
       executive = elementData.find('a').text();
     } else if (/PTS\/G:/.test(elementText)) {
-      console.log(elementText);
       [ppg, oppg] = elementText.match(/\d+\.\d/g);
       [ppg, oppg] = [parseFloat(ppg), parseFloat(oppg)];
     } else if (/SRS:/.test(elementText)) {
@@ -188,6 +156,12 @@ async function getTeamSeason(teamName, year) {
     tov: parseInt(teamStats.find('[data-stat="tov"]').text()),
     pf: parseInt(teamStats.find('[data-stat="pf"]').text()),
     pts: parseInt(teamStats.find('[data-stat="pts"]').text()),
+    ppg,
+    oppg,
+    srs,
+    pace,
+    expW,
+    expL,
   };
 
   const opponentStats = teamStatCheerio('#team_and_opponent > tbody')
@@ -220,34 +194,6 @@ async function getTeamSeason(teamName, year) {
     pts: parseInt(opponentStats.find('[data-stat="opp_pts"]').text()),
   };
 
-  // console.log(wins);
-  // console.log(losses);
-  // console.log(seed);
-  // console.log(coach);
-  // console.log(executive);
-  // console.log(ppg);
-  // console.log(oppg);
-  // console.log(srs);
-  // console.log(pace);
-  // console.log(oRtg);
-  // console.log(dRtg);
-  // console.log(netRtg);
-  // console.log(expW);
-  // console.log(expL);
-  // console.log(preseasonOdds);
-  // console.log(overUnder);
-  // console.log(arena);
-  // console.log(attendance);
-  // console.log(playoffs);
-  // console.log(playoffResult);
-  // console.log(name);
-  // console.log(season);
-  // console.log(roster);
-  // console.log(stats);
-  // console.log(oppStats);
-  console.log(stats);
-  console.log(oppStats);
-
   const team = {
     name,
     season,
@@ -256,6 +202,10 @@ async function getTeamSeason(teamName, year) {
     seed,
     coach,
     executive,
+    preseasonOdds,
+    overUnder,
+    arena,
+    attendance,
     stats,
     oppStats,
     playoffs,
