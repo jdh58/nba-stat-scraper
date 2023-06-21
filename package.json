@@ -1,13 +1,23 @@
 {
   "name": "nba-stat-scraper",
   "version": "1.0.0",
-  "description": "",
+  "description": "Web scraper for Basketball Reference and NBA.com",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdh58/nba-stat-scraper.git"
+  },
+  "keywords": [
+    "NBA",
+    "web",
+    "scraper",
+    "stats",
+    "basketball"
+  ],
+  "author": "jdh58",
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12"

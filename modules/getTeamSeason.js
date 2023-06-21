@@ -1,5 +1,4 @@
 const cheerio = require('cheerio');
-const pretty = require('pretty');
 
 async function getTeamSeason(teamName, year) {
   // Get the entire bio
