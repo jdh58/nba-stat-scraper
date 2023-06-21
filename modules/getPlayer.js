@@ -128,15 +128,15 @@ async function getPlayer(playerName) {
     stats.career = grabCareerStats(careerStatsRow, $);
 
     // Finally, get the player's NBA.com id and headshot
+    let picture = '';
     let playerID = $('#div_stats-nba-com > div > a:nth-child(1)').attr('href');
     // Null check for player that are retired or otherwise missing this link
     if (playerID) {
       playerID = playerID.match(/\d+/)[0];
+      picture = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
     } else {
       playerID = '';
     }
-
-    const picture = `https://cdn.nba.com/headshots/nba/latest/1040x760/${playerID}.png`;
 
     const player = {
       name,
