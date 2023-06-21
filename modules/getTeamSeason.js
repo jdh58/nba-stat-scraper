@@ -1,4 +1,5 @@
 const cheerio = require('cheerio');
+const pretty = require('pretty');
 
 async function getTeamSeason(teamName, year) {
   // ADD WINSHARES AND PER AND HEIGHT AND WEIGHT TO GET PLAYER IN CAREER
@@ -151,29 +152,101 @@ async function getTeamSeason(teamName, year) {
     });
   });
 
-  console.log(wins);
-  console.log(losses);
-  console.log(seed);
-  console.log(coach);
-  console.log(executive);
-  console.log(ppg);
-  console.log(oppg);
-  console.log(srs);
-  console.log(pace);
-  console.log(oRtg);
-  console.log(dRtg);
-  console.log(netRtg);
-  console.log(expW);
-  console.log(expL);
-  console.log(preseasonOdds);
-  console.log(overUnder);
-  console.log(arena);
-  console.log(attendance);
-  console.log(playoffs);
-  console.log(playoffResult);
-  console.log(name);
-  console.log(season);
-  console.log(roster);
+  // Save the total stats. Let the user divide if they want
+  /* This is the stupidest bug I've ever faced. It's commented out here,
+  so I have to uncomment the stats and THEN I can use them */
+  const teamStatHTML = $('#content > #all_team_and_opponent')
+    .html()
+    .replace(/<!--|-->/g, '');
+  const teamStatCheerio = cheerio.load(teamStatHTML);
+  const teamStats = teamStatCheerio('#team_and_opponent > tbody')
+    .first()
+    .find('tr')
+    .first();
+
+  const stats = {
+    g: parseInt(teamStats.find('[data-stat="g"]').text()),
+    mp: parseInt(teamStats.find('[data-stat="mp"]').text()),
+    fg: parseInt(teamStats.find('[data-stat="fg"]').text()),
+    fga: parseInt(teamStats.find('[data-stat="fga"]').text()),
+    fg_pct: parseFloat(teamStats.find('[data-stat="fg_pct"]').text()),
+    fg3: parseInt(teamStats.find('[data-stat="fg3"]').text()),
+    fg3a: parseInt(teamStats.find('[data-stat="fg3a"]').text()),
+    fg3_pct: parseFloat(teamStats.find('[data-stat="fg3_pct"]').text()),
+    fg2: parseInt(teamStats.find('[data-stat="fg2"]').text()),
+    fg2a: parseInt(teamStats.find('[data-stat="fg2a"]').text()),
+    fg2_pct: parseFloat(teamStats.find('[data-stat="fg2_pct"]').text()),
+    ft: parseInt(teamStats.find('[data-stat="ft"]').text()),
+    fta: parseInt(teamStats.find('[data-stat="fta"]').text()),
+    ft_pct: parseFloat(teamStats.find('[data-stat="ft_pct"]').text()),
+    orb: parseInt(teamStats.find('[data-stat="orb"]').text()),
+    drb: parseInt(teamStats.find('[data-stat="drb"]').text()),
+    trb: parseInt(teamStats.find('[data-stat="trb"]').text()),
+    ast: parseInt(teamStats.find('[data-stat="ast"]').text()),
+    stl: parseInt(teamStats.find('[data-stat="stl"]').text()),
+    blk: parseInt(teamStats.find('[data-stat="blk"]').text()),
+    tov: parseInt(teamStats.find('[data-stat="tov"]').text()),
+    pf: parseInt(teamStats.find('[data-stat="pf"]').text()),
+    pts: parseInt(teamStats.find('[data-stat="pts"]').text()),
+  };
+
+  const opponentStats = teamStatCheerio('#team_and_opponent > tbody')
+    .last()
+    .find('tr')
+    .first();
+  const oppStats = {
+    g: parseInt(opponentStats.find('[data-stat="g"]').text()),
+    mp: parseInt(opponentStats.find('[data-stat="mp"]').text()),
+    fg: parseInt(opponentStats.find('[data-stat="opp_fg"]').text()),
+    fga: parseInt(opponentStats.find('[data-stat="opp_fga"]').text()),
+    fg_pct: parseFloat(opponentStats.find('[data-stat="opp_fg_pct"]').text()),
+    fg3: parseInt(opponentStats.find('[data-stat="opp_fg3"]').text()),
+    fg3a: parseInt(opponentStats.find('[data-stat="opp_fg3a"]').text()),
+    fg3_pct: parseFloat(opponentStats.find('[data-stat="opp_fg3_pct"]').text()),
+    fg2: parseInt(opponentStats.find('[data-stat="opp_fg2"]').text()),
+    fg2a: parseInt(opponentStats.find('[data-stat="opp_fg2a"]').text()),
+    fg2_pct: parseFloat(opponentStats.find('[data-stat="opp_fg2_pct"]').text()),
+    ft: parseInt(opponentStats.find('[data-stat="opp_ft"]').text()),
+    fta: parseInt(opponentStats.find('[data-stat="opp_fta"]').text()),
+    ft_pct: parseFloat(opponentStats.find('[data-stat="opp_ft_pct"]').text()),
+    orb: parseInt(opponentStats.find('[data-stat="opp_orb"]').text()),
+    drb: parseInt(opponentStats.find('[data-stat="opp_drb"]').text()),
+    trb: parseInt(opponentStats.find('[data-stat="opp_trb"]').text()),
+    ast: parseInt(opponentStats.find('[data-stat="opp_ast"]').text()),
+    stl: parseInt(opponentStats.find('[data-stat="opp_stl"]').text()),
+    blk: parseInt(opponentStats.find('[data-stat="opp_blk"]').text()),
+    tov: parseInt(opponentStats.find('[data-stat="opp_tov"]').text()),
+    pf: parseInt(opponentStats.find('[data-stat="opp_pf"]').text()),
+    pts: parseInt(opponentStats.find('[data-stat="opp_pts"]').text()),
+  };
+
+  // console.log(wins);
+  // console.log(losses);
+  // console.log(seed);
+  // console.log(coach);
+  // console.log(executive);
+  // console.log(ppg);
+  // console.log(oppg);
+  // console.log(srs);
+  // console.log(pace);
+  // console.log(oRtg);
+  // console.log(dRtg);
+  // console.log(netRtg);
+  // console.log(expW);
+  // console.log(expL);
+  // console.log(preseasonOdds);
+  // console.log(overUnder);
+  // console.log(arena);
+  // console.log(attendance);
+  // console.log(playoffs);
+  // console.log(playoffResult);
+  // console.log(name);
+  // console.log(season);
+  // console.log(roster);
+  // console.log(stats);
+  // console.log(oppStats);
+  console.log(stats);
+  console.log(oppStats);
 
   // const team = {
   //   name,
