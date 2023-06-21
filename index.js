@@ -6,5 +6,5 @@ const getTeamSeason = require('./modules/getTeamSeason');
 
 (async () => {
   const banana = await getTeamSeason('cavaliers', 2016);
-  // console.log(JSON.parse(banana));
+  console.log(JSON.parse(banana));
 })();

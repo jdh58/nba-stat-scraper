@@ -248,32 +248,22 @@ async function getTeamSeason(teamName, year) {
   console.log(stats);
   console.log(oppStats);
 
-  // const team = {
-  //   name,
-  //   season: "1996-97",
-  //   record:
-  //   seed:
-  //   coach:
-  //   executive:
-  //   stats: {
-  //     ppg:
-  //     oppg:
-  //     srs:
-  //     pace:
-  //     ortg:
-  //     drtg:
-  //     netrtg:
-  //     expWL:
-  //     arena:
-  //     attendance:
-  //   }
-  //   playoffs: [
+  const team = {
+    name,
+    season,
+    wins,
+    losses,
+    seed,
+    coach,
+    executive,
+    stats,
+    oppStats,
+    playoffs,
+    playoffResult,
+    roster,
+  };
 
-  //   ]
-  //   playoffResult:
-  //   champions: true|false
-  //   roster: ["boob ryan"]
-  // }
+  return JSON.stringify(team);
 }
 
 module.exports = getTeamSeason;
