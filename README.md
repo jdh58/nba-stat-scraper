@@ -154,7 +154,8 @@ This function takes a player's name as input and returns the player's career sta
     draftPick: 1,
     draftYear: 2003,
     draftTeam: 'Cleveland Cavaliers',
-    debut: '2003-10-29T08:00:00.000Z'
+    debut: '2003-10-29T08:00:00.000Z',
+    careerLength: -1 // -1 for unretired players, since they're still playing
 }
 ```
 
