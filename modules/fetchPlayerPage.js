@@ -11,6 +11,11 @@ async function fetchPlayerPage(playerName) {
 
   let $ = cheerio.load(searchResponseHTML);
 
+  // Check if this query autoredirected. If so, we are already on the player page.
+  if ($('#meta h1').length > 0) {
+    return searchResponseHTML;
+  }
+
   const firstResultHREF = $('#players > .search-item')
     .first()
     .find('.search-item-url')
