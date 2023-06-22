@@ -55,8 +55,12 @@ async function getPlayer(playerName) {
       accolades.push(accoladeElement.text());
     });
 
-    // Now fetch nicknames
-    const playerInfoContainer = $('#meta div:nth-child(2)');
+    // Now fetch bio info
+    let playerInfoContainer = $('#meta div:nth-child(2)');
+    if ($('#meta > .nothumb').length > 0) {
+      // User has no thumbnail, the player info is in a different place.
+      playerInfoContainer = $('#meta > .nothumb');
+    }
     const nicknames = [];
     let draftPick = -1;
     let draftYear = -1;
