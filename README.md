@@ -40,6 +40,7 @@ This function takes a player's name as input and returns the player's career sta
 - The format for player names is `"first last" (e.g. "LeBron James")`, although the search will attempt to work with any query format.
 - The format for team names is `"city teamName" (e.g. "Charlotte Hornets")`. The search will attempt to work with any query, but it's worse with teams than players.
 - Years must be input in `yyyy` format.
+- Sometimes the search can suck and there's nothing you can do. If that's the case, try a listed nickname.
 
 ## Examples
 

@@ -4,6 +4,11 @@ const getPlayerSeason = require('./modules/getPlayerSeason');
 const getPlayerCareer = require('./modules/getPlayerCareer');
 const getTeamSeason = require('./modules/getTeamSeason');
 
+(async () => {
+  const banan = await getPlayer('John Wall');
+  console.log(JSON.parse(banan));
+})();
+
 module.exports = {
   getPlayer,
   getTeam,
