@@ -69,6 +69,7 @@ async function getPlayer(playerName) {
     let debut = '';
     let height = '';
     let weight = -1;
+    let careerLength = -1;
 
     const playerInfoElements = playerInfoContainer.find('p');
 
@@ -118,7 +119,7 @@ async function getPlayer(playerName) {
         weight = parseInt(elementText.match(/\d+/g)[2]);
       } else if (/^Career Length:/.test(elementText)) {
         // Grab career length if they're retired
-        careerLength = elementText.match(/\d+/)[0];
+        careerLength = parseInt(elementText.match(/\d+/)[0]);
       }
     });
 
