@@ -1,6 +1,6 @@
 {
   "name": "nba-stat-scraper",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Web scraper for Basketball Reference and NBA.com",
   "main": "index.js",
   "scripts": {
