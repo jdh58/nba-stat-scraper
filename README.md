@@ -15,23 +15,23 @@ To use this web scraper, follow the steps below:
 
 The scraper provides the following functions:
 
-### `getPlayer(playerName: String)`
+### `getPlayer(playerName: string)`
 
 This function takes a player's name as input and returns their biography, headshot, body measurables, accolades, season stats, and career stats.
 
-### `getTeam(teamName: String)`
+### `getTeam(teamName: string)`
 
 This function takes a team's name as input and returns the franchise's overall stats, such as win-loss record, championships won, and more.
 
-### `getTeamSeason(teamName: String, year: number)`
+### `getTeamSeason(teamName: string, year: number)`
 
 This function takes a team's name and a specific year as inputs and returns the team's win-loss record, roster, stats, opponent stats, season result, coaches, and other relevant information for that particular season.
 
-### `getPlayerSeason(playerName: String, year: number)`
+### `getPlayerSeason(playerName: string, year: number)`
 
 This function takes a player's name and a specific year as inputs and returns the player's statistics for that particular season.
 
-### `getPlayerCareer(playerName: String)`
+### `getPlayerCareer(playerName: string)`
 
 This function takes a player's name as input and returns the player's career stat averages.
 
@@ -40,7 +40,7 @@ This function takes a player's name as input and returns the player's career sta
 - The format for player names is `"first last" (e.g. "LeBron James")`, although the search will attempt to work with any query format.
 - The format for team names is `"city teamName" (e.g. "Charlotte Hornets")`. The search will attempt to work with any query, but it's worse with teams than players.
 - Years must be input in `yyyy` format.
-- Sometimes the search can suck and there's nothing you can do. If that's the case, try a listed nickname.
+- Sometimes the player search will give bad output even if you give proper input. If that's the case, try a listed nickname for the player.
 
 ## Examples
 
