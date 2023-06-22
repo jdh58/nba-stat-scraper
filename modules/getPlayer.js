@@ -113,9 +113,12 @@ async function getPlayer(playerName) {
       } else if (/^NBA Debut/.test(elementText)) {
         debut = new Date(elementText.slice(11).trim());
       } else if (/kg\)$/.test(elementText)) {
-        // Hieght and weight check
+        // Height and weight check
         height = elementText.match(/\d-\d+/)[0];
         weight = parseInt(elementText.match(/\d+/g)[2]);
+      } else if (/^Career Length:/.test(elementText)) {
+        // Grab career length if they're retired
+        careerLength = elementText.match(/\d+/)[0];
       }
     });
 
@@ -158,6 +161,7 @@ async function getPlayer(playerName) {
       draftYear,
       draftTeam,
       debut,
+      careerLength,
     };
 
     return JSON.stringify(player);
