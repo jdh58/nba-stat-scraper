@@ -146,9 +146,23 @@ async function getPlayer(playerName) {
       playerID = '';
     }
 
+    // Lastly, grab the jersey numbers and put them in an array
+    const jerseyContainer = $('.uni_holder .jersey text');
+
+    const jerseyNumbers = [];
+
+    jerseyContainer.each((index, element) => {
+      const elementText = $(element).text();
+
+      if (!jerseyNumbers.includes(parseInt(elementText))) {
+        jerseyNumbers.push(parseInt(elementText));
+      }
+    });
+
     const player = {
       name,
       picture,
+      jerseyNumbers,
       positions,
       height,
       weight,
