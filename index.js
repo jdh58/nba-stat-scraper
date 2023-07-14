@@ -5,7 +5,7 @@ const getPlayerCareer = require('./modules/getPlayerCareer');
 const getTeamSeason = require('./modules/getTeamSeason');
 
 (async () => {
-  const banan = await getPlayer('Lebron James');
+  const banan = await getPlayer('Damian Lillard');
   console.log(JSON.parse(banan));
 })();
 

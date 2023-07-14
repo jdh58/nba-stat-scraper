@@ -3,6 +3,8 @@ const grabStats = require('./grabStats');
 const grabCareerStats = require('./grabCareerStats');
 const fetchPlayerPage = require('./fetchPlayerPage');
 
+const pretty = require('pretty');
+
 async function getPlayer(playerName) {
   try {
     const firstResultHTML = await fetchPlayerPage(playerName);
@@ -146,7 +148,7 @@ async function getPlayer(playerName) {
       playerID = '';
     }
 
-    // Lastly, grab the jersey numbers and put them in an array
+    // Grab the jersey numbers and put them in an array
     const jerseyContainer = $('.uni_holder .jersey text');
 
     const jerseyNumbers = [];
@@ -156,6 +158,34 @@ async function getPlayer(playerName) {
 
       if (!jerseyNumbers.includes(parseInt(elementText))) {
         jerseyNumbers.push(parseInt(elementText));
+      }
+    });
+
+    // Lastly, get the player's career earnings and most recent
+    const FAQs = $('#div_faq h3, #div_faq p');
+
+    let recentSalary = -1;
+    let careerEarnings = -1;
+
+    FAQs.each((index, element) => {
+      const elementText = $(element).text();
+
+      if (/^How much does .* make\?/.test(elementText)) {
+        recentSalary = parseInt(
+          $(element)
+            .next()
+            .text()
+            .match(/[\d,]+/)[0]
+            .replace(/,/g, '')
+        );
+      } else if (/^What is .* net worth\?/.test(elementText)) {
+        careerEarnings = parseInt(
+          $(element)
+            .next()
+            .text()
+            .match(/[\d,]+/)[0]
+            .replace(/,/g, '')
+        );
       }
     });
 
@@ -181,6 +211,8 @@ async function getPlayer(playerName) {
       draftTeam,
       debut,
       careerLength,
+      recentSalary,
+      careerEarnings,
     };
 
     return JSON.stringify(player);
